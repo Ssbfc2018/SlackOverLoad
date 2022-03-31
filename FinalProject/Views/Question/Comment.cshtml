@@ -1,0 +1,33 @@
+﻿@model FinalProject.Models.Comment
+
+@{
+    ViewData["Title"] = "Comment";
+}
+
+<h1>Comment</h1>
+
+<h4>New Comment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Comment" asp-route-QorA="@ViewBag.QorA" asp-route-id="@ViewBag.id" method="post">
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea cols="30" rols="30" name="content" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Details" asp-route-questionId="@ViewBag.id">Back to Question</a> |
+    <a asp-action="HomePage" asp-controller="Home">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

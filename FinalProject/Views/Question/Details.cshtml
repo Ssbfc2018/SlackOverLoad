@@ -1,0 +1,140 @@
+﻿@model FinalProject.Models.Question
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div style="border:solid black 1px;padding:10px">
+    <h4>Question</h4>
+    <hr />
+    <div>
+        <h5 style="float:left;padding-right:10px">@Model.Title</h5>
+        <p style="color:lightgray">@Model.User.UserName</p>
+        <p>@Model.Content</p>
+        <p>Published At @Model.PublishDate</p>
+    </div>
+    <div>
+        Tags: 
+        @foreach(QuestionTag qt in Model.Tags)
+        {
+            <a asp-action="TagDetail" asp-route-questionId="@qt.TagId">@qt.Tag.Name |</a>
+        }
+    </div>
+</div>
+
+<div style="background-color:lightgray;width:80%;padding:10px;margin:10px auto">
+    <h5>Comment</h5>
+    @foreach(Comment c in @Model.Comments)
+    {
+        <p border-left="50px">@c.User.UserName: @c.Content</p>
+    }
+    <a style="background-color:white;color:black;border:solid black 1px;padding:5px;text-decoration:none" asp-action="Comment" asp-route-QorA="q" asp-route-id="@Model.Id">Make A Comment</a>
+</div>
+
+<a asp-action="CreateAnswer" asp-route-questionId="@Model.Id" 
+style="background-color:white;color:black;border:solid black 1px;margin-left:10px;margin-top:20px;padding:5px;text-decoration:none">
+Answer This Question</a>
+
+@if (!ViewBag.IsVoting)
+{
+    <div style="display:flex;margin:10px">
+        <form asp-action="Voting" asp-route-QorA="q" asp-route-id="@Model.Id" asp-route-upDown="true">
+            <button type="submit" style="border:none;background-color:red">Upvote</button>
+        </form>
+        <form asp-action="Voting" asp-route-QorA="q" asp-route-id="@Model.Id" asp-route-upDown="false">
+            <button type="submit" style="border:none;margin-left:50px;background-color:black;color:white">Downvote</button>
+        </form>
+    </div>
+}else{
+    <form asp-action="Voting" asp-route-QorA="q" asp-route-id="@Model.Id" asp-route-upDown="true" style="margin:10px">
+        <button disabled type="submit">@Model.Votations.Count</button>
+    </form>
+}
+
+<hr />
+
+<div style="width:80%;padding:10px">
+    <h5>Answers</h5>
+    <div class="correctAnswer" style="background-color:yellow">
+        @if (Model.CorrectAnswerId != null)
+        {
+            <h4>Correct Answer: </h4>
+            @foreach(Answer s in @Model.Answers)
+            {
+                @if (s.Id == @Model.CorrectAnswerId)
+                {
+                    <p>@s.User.UserName</p>
+                    <p>@s.Content</p>
+                    <div style="background-color=gray;margin-left=50px">
+                        @foreach(Comment c in @s.Comments)
+                        {
+                            <p>@c.User.UserName: @c.Content</p>
+                        }
+                        <a asp-action="Comment" asp-route-questionId="@s">Make A Comment</a>
+                    </div>
+                    @if (@s.UserId != @ViewBag.userId && @s.Votations.FirstOrDefault(v => v.UserId == @ViewBag.userId) == null)
+                    {
+                        <div style="display:flex;margin:10px">
+                            <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="true">
+                                <button type="submit" style="border:none;background-color:red">Upvote</button>
+                            </form>
+                            <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="false">
+                                <button type="submit" style="border:none;margin-left:50px;background-color:black;color:white">Downvote</button>
+                            </form>
+                        </div>
+                    }else{
+                        <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="true" style="margin:10px">
+                            <button disabled type="submit">@Model.Votations.Count</button>
+                        </form>
+                    }
+                }
+            }
+        }
+    </div>
+    <div style="background-color:lightgray">
+        @foreach(Answer s in Model.Answers)
+        {
+            @if (s.Id != Model.CorrectAnswerId)
+            {
+                <p>@s.User.UserName</p>
+                @if (@Model.CorrectAnswerId == null && @Model.UserId==@ViewBag.userId)
+                {
+                    <form asp-action="SetCorrectAnswer"  style="float:right" asp-route-qid="@Model.Id" asp-route-sid="@s.Id">
+                        <button type="submit">Choose As Correct Answer</button>
+                    </form>
+                }
+                //voting
+                @if (@s.UserId != @ViewBag.userId && @s.Votations.FirstOrDefault(v => v.UserId == @ViewBag.userId) == null)
+                {
+                    <div style="display:flex;margin:10px;float:right">
+                        <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="true">
+                            <button type="submit" style="border:none;background-color:red">Upvote</button>
+                        </form>
+                        <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="false">
+                            <button type="submit" style="border:none;margin-left:50px;background-color:black;color:white">Downvote</button>
+                        </form>
+                    </div>
+                }else{
+                    <form asp-action="Voting" asp-route-QorA="s" asp-route-id="@s.Id" asp-route-upDown="true" style="display:flex;margin:10px;float:right">
+                        <button disabled type="submit">@Model.Votations.Count</button>
+                    </form>
+                }
+                <p style="margin:5px">@s.Content</p>
+                <div style="background-color=gray;margin:5px">
+                    @foreach(Comment c in @s.Comments)
+                    {
+                        <p>@c.User.UserName: @c.Content</p>
+                    }
+                    <a asp-action="Comment" asp-route-id="@s.Id" asp-route-QorA="a" style="background-color:white;color:black;border:solid black 1px;padding:5px">Make A Comment</a>
+                </div>
+
+            }
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-action="HomePage" asp-controller="Home">Back to List</a>
+</div>

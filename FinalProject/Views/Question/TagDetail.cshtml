@@ -1,0 +1,41 @@
+﻿@model List<QuestionTag>
+
+@{
+    ViewData["Title"] = "Tag";
+}
+
+<h1>Tag</h1>
+
+<h3>@Model[0].Tag.Name</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                User
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Question.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Question.User.UserName)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Question" ,new{ questionId=item.Question.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="HomePage" asp-controller="Home">Back to List</a>
+</div>

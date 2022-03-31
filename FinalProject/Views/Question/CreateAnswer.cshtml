@@ -1,0 +1,32 @@
+﻿@model FinalProject.Models.Answer
+
+@{
+    ViewData["Title"] = "Answer";
+}
+
+<h1>Answer</h1>
+
+<h4>New Answer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateAnswer" asp-route-questionId="@ViewBag.questionId" method="post">
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea cols="30" rols="30" name="content" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="HomePage" asp-controller="Home">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

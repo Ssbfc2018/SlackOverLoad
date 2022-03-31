@@ -1,0 +1,88 @@
+﻿@model List<Question>
+
+@{
+    ViewData["Title"] = "HomePage";
+}
+
+<h1>HomePage</h1>
+
+<div>
+    <a asp-controller="Question" asp-action="Create">Create New Question</a> |
+    <a asp-action="AdminPage">Administration Page</a> |
+    <span float="right">Reputation: @ViewBag.ApplicationUser.Reputation</span>
+    <form asp-action="ChangeSorting" asp-route-Switch="@ViewBag.Sorting" asp-route-PageIndex="@ViewBag.PageIndex">
+        <button type="submit">@ViewBag.Sorting</button>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                Content
+            </th>
+            <th>
+                Num of Answers
+            </th>
+            <th>
+                User
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Question item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnswerCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Question" ,new{ questionId=item.Id })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<nav class="Page navigation" style="display:flex;justify-content:space-between">
+    <ul class="pagination">
+        <li>
+            Page <input type="text" value="@ViewBag.PageIndex" style="width:50px;" /> of @ViewBag.PageSize
+        </li>
+    </ul>
+    <ul class="pagination">
+        <li><a asp-action="HomePage" asp-route-currentPageIndex="1">First</a>|</li>
+
+        @if (@ViewBag.PageIndex > 1)
+        {
+            <li><a asp-action="HomePage" asp-route-currentPageIndex="@ViewBag.Prev">Prev</a>|</li>
+        }
+        else
+        {
+            <li class="disabled"><a asp-action="#">Prev</a>|</li>
+        }
+
+        @if (@ViewBag.PageIndex == @ViewBag.PageSize)
+        {
+            <li class="disabled"><a asp-action="#">Next</a>|</li>
+        }
+        else
+        {
+            <li><a asp-action="HomePage" asp-route-currentPageIndex="@ViewBag.Next">Next</a>|</li>
+        }
+            
+        <li><a asp-action="HomePage" asp-route-currentPageIndex="@ViewBag.PageSize">Last</a></li>
+    </ul>
+</nav>
